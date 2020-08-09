@@ -14,7 +14,9 @@ my $builder = Module::Build->new(
      license => 'perl',
      dist_abstract => 'Store currried subroutins',
      requires => {
-            'perl' => '5.12.0'
+            'perl' => '5.12.0',
+            'Car' => '0',
+            'Ref::Util' => '0'
      }
 );
 

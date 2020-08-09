@@ -1,11 +1,11 @@
-  package Subroutine::Container
-# *****************************
-; our $VERSION='0.100'
-# ********************
+  package Subroutine::Container;
+# ******************************
+  our $VERSION='0.101';
+# *********************
 ; use strict
 ; use warnings
 
-; use Carp
+; use Carp ()
 
 ; sub new
     { my ($class)=@_
@@ -32,9 +32,9 @@
 ; sub take
     { my ($self,$key,@par)=@_
     ; unless( $self->exists($key) )
-        { carp "$key isn't in the chest."
-        ; return 
-        }			   
+        { Carp::carp "The container can't find $key."
+        ; return
+        }
     ; &{$self->{$key}}(@par);
     }
 
@@ -49,22 +49,22 @@ Subroutine::Container - Class to store procedures in a hash
 =head1 SYNOPSIS
 
   ; use Subroutine::Container
-  
+
   ; my $c = Subroutine::Container->new
-  
-  ; sub hello 
-      { $val={ 'de' => 'hallo', 'en' => 'hello' }->{shift()} 
-      ; sub { my $pers=shift; ucfirst($val)." ".$pers } 
+
+  ; sub hello
+      { $val={ 'de' => 'hallo', 'en' => 'hello' }->{shift()}
+      ; sub { my $pers=shift; ucfirst($val)." ".$pers }
       }
-            
+
   ; $c->insert("hello world",\&hello, "de")
-  
-  ; print $chest->take("hello world","Welt")
-  
+
+  ; print $c->take("hello world","Welt")
+
 =head1 DESCRIPTION
 
 This is a simple interface to call subroutines by strings. So
-it is easy to have longer but readable function calls or totally 
+it is easy to have longer but readable function calls or totally
 cryptical ones.
 
 =head1 USAGE
@@ -78,8 +78,8 @@ A simple Constructor for a hash based object.
   ; $chest->insert("name",sub{my $a=$_[0];sub{$a}},"name")
 
 Important is the second method argument. It's used to be a valid code reference
-with another code reference as return value. This code ref is then stored under 
-the value from first argument. If an entry exists under this name, this method 
+with another code reference as return value. This code ref is then stored under
+the value from first argument. If an entry exists under this name, this method
 does nothing. Additional arguments will be used when the second argument
 is executed.
 
@@ -106,7 +106,7 @@ Getting feedback and correct all mistakes in code and documentation.
 
 =head1 AUTHOR
 
-Sebastian Knapp 
+Sebastian Knapp
 
 =head1 COPYRIGHT AND LICENSE
 

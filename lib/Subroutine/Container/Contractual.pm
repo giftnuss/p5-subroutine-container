@@ -1,13 +1,12 @@
   package Subroutine::Container::Contractual;
-# ******************************************
-  our $VERSION = '0.100';
+# *******************************************
+  our $VERSION = '0.101';
 # ***********************
   use strict; use warnings
 ; use parent 'Subroutine::Container'
 
-; use Carp
-#; $Carp::CarpLevel = 2;
-; use Data::Dumper
+; use Carp ()
+; use Ref::Util ()
 
 # key to save the actual chest function
 ; use constant PERFORM => 0
@@ -25,9 +24,8 @@
     ; for ( 0..$#parts )
         { if( defined($code->{$parts[$_]}) )
             { $entry->[$_] = &{$code->{$parts[$_]}}(@args)
-            ; unless( ref $entry->[$_] eq 'CODE' )
-                { print Dumper($entry)
-                ; croak uc($_)." is no sub"
+            ; unless( Ref::Util::is_coderef( $entry->[$_] ))
+                { Carp::croak uc($_)." is no sub"
                 }
             }
         }
@@ -42,16 +40,16 @@
 ; sub take
     { my ($self,$key,@par)=@_
     ; unless( $self->exists($key)  )
-        { carp "$key isn't in the chest."
+        { Carp::carp "$key isn't in the chest."
         ; return undef
         }
     ; unless( ref $self->{$key}->[PERFORM] eq "CODE" )
-        { carp "no code to perform for key $key."
+        { Carp::carp "no code to perform for key $key."
         }
 
     ; if( CORE::exists($self->{$key}->[REQUIRE]) )
         { unless( &{$self->{$key}->[REQUIRE]}(@par) )
-            { carp "Failure during check of arguments for $key."
+            { Carp::carp "Failure during check of arguments for $key."
             ; return undef
         }   }
 
@@ -63,7 +61,7 @@
         ; if( CORE::exists($self->{$key}->[ENSURE]) )
             { my @temp = &{$self->{$key}->[ENSURE]}(@result)
             ; unless( @temp && $temp[0] )
-                { carp "Failure during check of result from $key."
+                { Carp::carp "Failure during check of result from $key."
                 ; return ()
                 }
             }
@@ -73,7 +71,7 @@
         { my $result = &{$self->{$key}->[PERFORM]}(@par)
         ; if( CORE::exists($self->{$key}->[ENSURE]) )
             { unless( &{$self->{$key}->[ENSURE]}($result) )
-                { carp "Failure during check of result from $key."
+                { Carp::carp "Failure during check of result from $key."
                 ; return undef
                 }
             }
